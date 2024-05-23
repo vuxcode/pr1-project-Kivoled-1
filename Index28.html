@@ -1,0 +1,164 @@
+<html>
+<head>
+  <title>Snake</title>
+<style>
+
+  body {
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+  canvas {
+  border:10px solid #000000;
+}
+
+#upB, #downB {
+height: 50px;
+width: 50px;
+}
+#leftB, #rightB {
+height: 50px;
+width: 50px;
+margin-left: 30px;
+margin-right: 30px;
+top: -100px;
+position: relative;
+}
+
+#HighS {
+  font-size: 30px;
+  position: relative;
+}
+}
+
+  </style>
+</head>
+
+<body>
+<p id="HighS" style="display: none">Score: 0</p>
+<canvas id="SC" width="600" height="600"></canvas>
+<p><button id="upB" onclick="mU()">↑</button></p>
+<p><button id="downB" onclick="mD()">↓</button></p>
+<button id="leftB" onclick="mL()">←</button>
+<button id="rightB" onclick="mR()">→</button>
+<script>
+
+var canvas = document.getElementById('SC');
+var ctx = canvas.getContext("2d"); //this is what i learned from
+
+
+var squareC = 20; //how many squares on the canvas
+var squareS = 20; //The size of the squares and size of snake
+var snY = 10; //the position of the snake is in y
+var snX = 10; //the position of the snake is in x
+
+var speed = 8; //basically how many squares it moves per frame
+var speedX = 0; //The speed and what way in the X-axis direction... -1 = moves left, 1 = moves right, 0 = stops
+var speedY = 0; //The speed and what way in the Y-axis direction... -1 = moves up, 1 = moves down, 0 = stops
+
+//the apple is teh same as the snake, but it only moves to random locations every time the snake collides with it
+var appleX = 15;
+var appleY = 15;
+
+var HighS = 0; //The high score of every collision you make with an apple
+
+var snT = []; //snakeTail
+
+//If i have to add more snake parts i probably need to make an push array that adds more squares to the snake somehow
+function RUN(){ //runs the whole program and reloads it
+sPos();
+Canv();
+SnakeColl();
+Apple();
+Snake();
+score();
+console.log("Frames");
+}
+
+function Canv(){
+  ctx.fillStyle = "#b3ffb3"; //paints the canvas green
+  ctx.fillRect(0, 0, 600, 600);
+}
+
+function Snake(){
+  ctx.fillStyle = "#ff0000"; //draws and paints the snake
+  ctx.fillRect(snX * squareC, snY * squareC, squareS, squareS);
+
+}
+
+function Apple(){
+  ctx.fillStyle = "blue"; //draws and paints the snake
+  ctx.fillRect(appleX * squareC, appleY * squareC, squareS, squareS);
+}
+
+function SnakeColl(){ //If the apple equals the position of the snake, then the apple should move to a different location
+if (snX == appleX && snY == appleY) {
+  HighS++;
+  document.getElementById('HighS').innerText = "Score: " + HighS;
+
+  snT.push({ x: snX, y: snY}); // Alright so this should make it so it grows longer by adding one
+  console.log("+1 Tail!"); //It does not display, but it does
+
+  appleX = Math.floor(Math.random() * squareC); //I found This https://stackoverflow.com/questions/45333664/javascript-snake-game-how-to-move-the-apple
+  appleY = Math.floor(Math.random() * squareC);
+}
+}
+
+function score (){ //Draws the score on the screen!
+ctx.fillStyle = "black";
+ctx.font = "20px Arial";
+ctx.fillText("Score: " + HighS, 10, 30);
+
+}
+
+function sPos (){ //makes the snake move and changes the position based on the button you press
+  snX += speedX; //Basically adds whatever the value of speedX is to snakex on the horizontal line. If the speedX value is -1 it moves left and +1 it moves right.
+  snY += speedY; //Same as above but on the Vertical Line
+
+}
+
+function mU() { // Up arrow
+  speedX = 0;
+  speedY = -1;
+}
+function mD() { // Down arrow
+  speedX = 0;
+  speedY = 1;
+}
+function mL() { // Left arrow
+  speedX = -1;
+  speedY = 0;
+}
+function mR() { // Right arrow
+  speedX = 1;
+  speedY = 0;
+}
+
+
+document.body.addEventListener("keydown", Move);
+function Move(event) {
+
+  if (event.keyCode == 38 || event.keyCode == 87) { // Up arrow / W
+    speedX = 0;
+    speedY = -1;
+  }
+  if (event.keyCode == 40 || event.keyCode == 83) { // Down arrow / S
+    speedX = 0;
+    speedY = 1;
+  }
+  if (event.keyCode == 37 || event.keyCode == 65) { // Left arrow / A
+    speedX = -1;
+    speedY = 0;
+  }
+  if (event.keyCode == 39 || event.keyCode == 68) { // Right arrow / D
+    speedX = 1;
+    speedY = 0;
+}
+}
+
+setInterval(RUN, 1000 / speed);
+
+</script>
+</body>
+</html>

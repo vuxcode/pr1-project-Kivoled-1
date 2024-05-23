@@ -1,0 +1,74 @@
+<html>
+<head>
+  <title>Snake</title>
+<style>
+
+  body {
+  text-align: center;
+}
+
+  canvas {
+  border:10px solid #000000;
+}
+
+#upB, #downB {
+height: 50px;
+width: 50px;
+}
+#leftB, #rightB {
+height: 50px;
+width: 50px;
+margin-left: 30px;
+margin-right: 30px;
+top: -100px;
+position: relative;
+}
+
+  </style>
+</head>
+
+<body>
+<canvas id="SC" width="750" height="750"></canvas>
+<p><button id="upB">↑</button></p>
+<p><button id="downB">↓</button></p>
+<button id="leftB">←</button>
+<button id="rightB">→</button>
+<script>
+
+var canvas = document.getElementById('SC');
+var ctx = canvas.getContext("2d");
+var snakex = 500;
+var snakey = 500;
+var Swid = 20;
+var Shei = 20;
+var speedX = 0;
+var speedY = 0;
+var apple;
+
+function RUN(){
+Canv();
+Snake(snakex, snakey, Swid, Shei);
+}
+RUN();
+
+function Canv(){
+  ctx.fillStyle = "#b3ffb3";
+  ctx.fillRect(0, 0, 750, 750);
+}
+
+function Snake(snakex, snakey, Swid, Shei){
+  ctx.fillStyle = "#ff0000";
+  ctx.fillRect(snakex, snakey, Swid, Shei);
+
+}
+//If i am correct i can move the snake with the buttons if i use the onclick somehow.
+//From the last time took the prog course i remember i used speed variables to move the snake somehow and gonna try to do it again this time with trial and error.
+
+
+function Move(){
+
+}
+</script>
+
+</body>
+</html>

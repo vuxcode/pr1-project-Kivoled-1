@@ -1,0 +1,218 @@
+<html>
+<head>
+  <title>Snake</title>
+<style>
+
+  body {
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+  canvas {
+  border:10px solid #000000;
+}
+
+#upB, #downB {
+height: 50px;
+width: 50px;
+}
+#leftB, #rightB {
+height: 50px;
+width: 50px;
+margin-left: 30px;
+margin-right: 30px;
+top: -100px;
+position: relative;
+}
+
+#HighS {
+  font-size: 30px;
+  position: relative;
+}
+
+  </style>
+</head>
+
+<body>
+<p id="HighS" style="display: none">Score: 0</p>
+<canvas id="SC" width="600" height="600"></canvas>
+<p><button id="upB" onclick="mU()">↑</button></p>
+<p><button id="downB" onclick="mD()">↓</button></p>
+<button id="leftB" onclick="mL()">←</button>
+<button id="rightB" onclick="mR()">→</button>
+<script>
+
+var canvas = document.getElementById('SC');
+var ctx = canvas.getContext("2d");
+
+
+
+var squareC = 20; //how many squares on the canvas
+var squareS = 20; //The size of the squares and size of snake
+var snY = 10; //the position of the snake is in y
+var snX = 10; //the position of the snake is in x
+
+var speed = 8; //basically how many squares it moves per frame
+var speedX = 0; //The speed and what way in the X-axis direction... -1 = moves left, 1 = moves right, 0 = stops
+var speedY = 0; //The speed and what way in the Y-axis direction... -1 = moves up, 1 = moves down, 0 = stops
+
+//the apple is teh same as the snake, but it only moves to random locations every time the snake collides with it
+var appleX = 15;
+var appleY = 15;
+var HighS = 0; //The high score of every collision you make with an apple
+var snT = []; //Should of had 2 tails when the game started, but couldn't figure it out in time
+
+
+
+//Since this function runs the game, it all should end whenever the snake dies
+function RUN(){ //runs the whole program
+sPos();
+
+var result = ProbGO(); //This si checking If any game over events occur
+if (result){
+  return;
+}
+
+Canv();
+SnakeColl();
+Apple();
+Snake();
+score();
+setTimeout(RUN, 1000 / speed);
+console.log("Frames");
+}
+
+
+function ProbGO(){
+  var GameOver = false; //the initial value is false and is used to keep track of whether the game has ended or not.
+
+//the snake dies when it collides with itself, but only when it has 2+ tails
+  for (var selfd = 0; selfd < snT.length; selfd++) { // starts a loop with a variable selfd which will continue to run as long as the selfd is less thean the lenght of snT "which is the array that has the tail segments"
+    if (snX === snT[selfd].x && snY === snT[selfd].y) { //Checks if the snake "snX and snY" has the same cords as any of the tails. If it matches the same cords as the tails then it has collided with itself
+      GameOver = true; //the GameOver switches to true if the collide happens and the break exists the loop
+      break;
+    }
+  }
+                    //The if statements are the cords of the canvas which is in a 30x30 grid and checks if the snake has gone out of the boundries, if so then game over
+  if (snX < 0) {
+    GameOver = true;//Left of the grid
+  }
+  if (snX > 29) {
+    GameOver = true;//Right of the grid
+  }
+  if (snY < 0) {
+    GameOver = true;//Up of the grid
+  }
+  if (snY > 29) {
+    GameOver = true;//Down of the grid
+  }
+//If any of these are true then game over basically
+
+if (GameOver) { //This basically draws the game over text and places it in the middle of the canvas when the snake dies
+  ctx.fillStyle = "RED";
+  ctx.font = "60px Geneva, Verdana, sans-serif";
+  ctx.fillText("GAME OVER", canvas.width / 5.2, canvas.height / 2.2)
+
+}
+
+return GameOver; //it returns to the RUN function and just stops the whole game
+}
+
+
+
+function Canv(){ //draws the canvas
+  ctx.fillStyle = "#b3ffb3";
+  ctx.fillRect(0, 0, 600, 600);
+}
+
+function Snake(){
+  ctx.fillStyle = "green"; //draws and paints the snake
+  ctx.fillRect(snX * squareC, snY * squareC, squareS, squareS); //it draws the snake in the position of snX and snY with the size of squareS
+       for (var tail = 0; tail < snT.length; tail++) { //this starts a loop that should go through each part of the tail!
+       ctx.fillRect(snT[tail].x * squareC, snT[tail].y * squareC, squareS, squareS); //basically draws the tail like the snake head in the right position
+  }
+}
+
+function Apple(){
+  ctx.fillStyle = "red"; //this makes the apple bl
+  ctx.fillRect(appleX * squareC, appleY * squareC, squareS, squareS);
+}
+
+function SnakeColl(){ //checks if the snakes head has collided with the apple
+if (snX == appleX && snY == appleY) { //if the snakes head is equal to the position of the apple
+  HighS++; //adds one to the score
+  document.getElementById('HighS').innerText = "Score: " + HighS; //updates the score on the displays
+
+  snT.push({ x: snX, y: snY}); //Add a new segment to the snakes tail at the current snakes position! basically grows the snake
+  console.log("+1 Tail!"); //logs the snake whenever it grows a tail
+
+  appleX = Math.floor(Math.random() * squareC); //I found This https://stackoverflow.com/questions/45333664/javascript-snake-game-how-to-move-the-apple
+  appleY = Math.floor(Math.random() * squareC); //moves the apple in a new random position in the canvas
+}
+}
+
+function score (){ //This basically draws the score on the screen
+ctx.fillStyle = "black";
+ctx.font = "20px Arial";
+ctx.fillText("Score: " + HighS, 10, 30);
+
+}
+
+function sPos (){ //makes the snake/tail move and changes the position based on the button you press
+for (var tail = snT.length -1; tail > 0; tail--) { //another loop that goes through each tail part, from last to first
+  snT[tail] = { x: snT[tail - 1].x, y: snT[tail - 1].y }; //this makes the tail follow the segment in front of it
+}
+
+  if (snT.length > 0) { //checks if there is a tail part present
+       snT[0] = { x: snX, y: snY }; //ensures that the first tail part follows the snake
+  }
+
+  snX += speedX; //Basically adds whatever the value of speedX is to snakex on the horizontal line. If the speedX value is -1 it moves left and +1 it moves right.
+  snY += speedY; //Same as above but on the Vertical Line
+
+}
+
+function mU() { // Up arrow
+  speedX = 0;
+  speedY = -1;
+}
+function mD() { // Down arrow
+  speedX = 0;
+  speedY = 1;
+}
+function mL() { // Left arrow
+  speedX = -1;
+  speedY = 0;
+}
+function mR() { // Right arrow
+  speedX = 1;
+  speedY = 0;
+}
+
+
+document.body.addEventListener("keydown", Move);
+function Move(event) {
+
+  if (event.keyCode == 38 || event.keyCode == 87) { // Up arrow / W
+    speedX = 0;
+    speedY = -1;
+  }
+  if (event.keyCode == 40 || event.keyCode == 83) { // Down arrow / S
+    speedX = 0;
+    speedY = 1;
+  }
+  if (event.keyCode == 37 || event.keyCode == 65) { // Left arrow / A
+    speedX = -1;
+    speedY = 0;
+  }
+  if (event.keyCode == 39 || event.keyCode == 68) { // Right arrow / D
+    speedX = 1;
+    speedY = 0;
+}
+}
+RUN();
+
+</script>
+</body>
+</html>

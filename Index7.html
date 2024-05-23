@@ -1,0 +1,52 @@
+<html>
+
+
+<head>
+  <style>
+  body {
+  text-align: center;
+}
+
+canvas {
+border:10px solid #000000;
+}
+  </style>
+</head>
+
+<body>
+<h1>Snake Game</h1>
+<canvas id="SC" width="750" height="750"></canvas>
+<script>
+
+//drawing on the canvas
+//SC = Snake Canvas
+var canvas = document.getElementById('SC');
+var ctx = canvas.getContext("2d");
+var x = 500;
+var y = 500;
+var wid = 20;
+var hei = 20;
+var apple;
+
+function RUN(){
+Canv();
+Snake(x, y, wid, hei);
+}
+RUN();
+
+
+function Canv(){
+  ctx.fillStyle = "#b3ffb3";
+  ctx.fillRect(0, 0, 750, 750);
+}
+//THE RED BOX SHOWED UP AYYYY!!!
+function Snake(x, y, wid, hei){
+  ctx.fillStyle = "#ff0000";
+  ctx.fillRect(x, y, wid, hei);
+
+}
+
+</script>
+
+</body>
+</html>
